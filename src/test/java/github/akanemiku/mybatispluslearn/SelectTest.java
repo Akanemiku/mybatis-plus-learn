@@ -1,7 +1,10 @@
 package github.akanemiku.mybatispluslearn;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.service.additional.query.impl.LambdaQueryChainWrapper;
 import github.akanemiku.mybatispluslearn.dao.UserMapper;
 import github.akanemiku.mybatispluslearn.entity.User;
 import org.junit.Test;
@@ -278,6 +281,49 @@ public class SelectTest {
         queryWrapper.like("name", "刘红雨").lt("age", 40);
         User user = mapper.selectOne(queryWrapper);
         System.out.println(user);
+    }
+
+    /**
+     * lambda查询
+     *
+     * 普通方式查询若列名写错，编译后才会报错
+     * lambda写错时会直接报错
+     */
+    @Test
+    public void selectLambda(){
+        //LambdaQueryWrapper<User> lambda = new QueryWrapper<User>().lambda();
+        //LambdaQueryWrapper<User> lambda2 = new LambdaQueryWrapper<>();
+        LambdaQueryWrapper<User> lambdaQuery = Wrappers.<User>lambdaQuery();
+        lambdaQuery.like(User::getName,"雨").lt(User::getAge,40);
+        List<User> userList = mapper.selectList(lambdaQuery);
+        userList.forEach(System.out::println);
+    }
+
+    /**
+     * 名字为王姓并且（年龄小于40或邮箱不为空）
+     * name like '王%' and (age<40 or email is not null)
+     */
+    @Test
+    public void selectLambda2(){
+        LambdaQueryWrapper<User> lambdaQuery = Wrappers.<User>lambdaQuery();
+        lambdaQuery.likeRight(User::getName,"王")
+                .and(lqw->lqw
+                        .lt(User::getAge,40)
+                        .or()
+                        .isNotNull(User::getEmail));
+        List<User> userList = mapper.selectList(lambdaQuery);
+        userList.forEach(System.out::println);
+    }
+
+    /**
+     * 新版写法
+     */
+    @Test
+    public void selectLambda3(){
+        List<User> userList = new LambdaQueryChainWrapper<User>(mapper)
+                .like(User::getName,"雨")
+                .ge(User::getAge,20).list();
+        userList.forEach(System.out::println);
     }
 
 }
