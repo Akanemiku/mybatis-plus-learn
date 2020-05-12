@@ -1,5 +1,6 @@
 package github.akanemiku.mybatispluslearn.entity;
 
+import com.baomidou.mybatisplus.annotation.SqlCondition;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -24,7 +25,9 @@ public class User implements Serializable {
     /**
      * 姓名
      */
-    @TableField("name")
+    //@TableField(value = "name",condition = SqlCondition.LIKE)
+    //SqlCondition不支持的可以看源码改
+    @TableField(value = "name")
     private String name;
     /**
      * 年龄
@@ -39,12 +42,16 @@ public class User implements Serializable {
     /**
      * 直属上级
      */
-    @TableField("managerId")
     private Long managerId;
     /**
      * 创建时间
      */
-    @TableField("createTime")
     private LocalDateTime createTime;
 
+    /**
+     * 备注
+     * 数据库中无对应字段
+     */
+    @TableField(exist = false)
+    private String remark;
 }

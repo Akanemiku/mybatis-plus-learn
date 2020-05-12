@@ -9,24 +9,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class SimpleTest {
-
+public class OtherTest {
     @Autowired
     private UserMapper mapper;
-
-    /**
-     * select * 操作
-     */
-    @Test
-    public void select(){
-        List<User> userList = mapper.selectList(null);
-        userList.forEach(System.out::println);
-    }
-
 
     /**
      * 插入操作
